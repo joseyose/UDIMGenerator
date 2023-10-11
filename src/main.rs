@@ -2,8 +2,7 @@ mod udim;
 use crate::udim::UDIM;
 
 use std::fs::File;
-use std::io;
-use std::io::{BufRead, BufReader, Error};
+use std::io::{self, BufRead, Write, Result};
 use std::path::{Path, PathBuf};
 
 use clap::{Parser};
@@ -18,23 +17,22 @@ struct Args {
     output_file: Option<PathBuf>,
 }
 
-fn main() {
+fn main() -> Result<()> {
     println!("Hello...you are running UDIMGenerator!");
     let cli = Args::parse();
 
     if let Some(input_path) = cli.input_file.as_deref() {
-
-
-        // Write to file is the user provided it otherwise print to console
-        if let Some(output_path) = cli.output_file.as_deref() {
+        // Decide the writer: a file if the user provide an output path, stdout otherwise.
+        let mut writer: Box<dyn Write> = if let Some(output_path) = cli.output_file.as_deref() {
             println!("User provided an output_filepath so we are writing to it");
-            // write to a file
-            let mut file = File::create("output.txt").unwrap();
-            UDIM::new(input_path, output_path).write_data(&mut file).unwrap();
+            Box::new(File::create(output_path)?)
         } else {
-            // write to std out
-            println!("User didn't provide and output_filepath so writing to stdout");
-            UDIM::new(input_path, Path::new("")).write_data(&mut io::stdout()).unwrap();
-        }
+            println!("User didn't provide an output_filepath so writing to stdout");
+            Box::new(io::stdout())
+        };
+
+        UDIM::new(input_path).write_data(&mut writer)
+    } else {
+        Ok(())
     }
 }
