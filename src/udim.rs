@@ -1,10 +1,58 @@
 
 use std::fs::File;
-use std::io::{BufRead, BufReader, Error};
-use std::path::Path;
+use std::io::{self, BufRead, BufReader, Error, Write};
+use std::path::{Path, PathBuf};
 
-fn create_udim() {
 
+// Okay, I think I have an idea of what I want.
+// I think I want to create a UDIM object that will store the
+// input_file and output_file destinations.
+// It will also store the final parsed data
+// And then based on the users needs it will either print to std or to file
+pub struct UDIM {
+    input_file: PathBuf,
+    output_file: PathBuf,
+    process_data: String,
+
+}
+
+impl UDIM {
+    pub fn new(input_file: &Path, output_file: &Path) -> Self {
+        let input_file_buf = input_file.to_path_buf();
+        let process_data = start(&input_file_buf);
+
+        UDIM {
+            input_file: input_file_buf,
+            output_file: output_file.to_path_buf(),
+            process_data,
+        }
+    }
+
+    pub fn print(&self) {
+        println!("{}", self.process_data);
+    }
+
+    pub fn write_data<W: Write>(&self, writer: &mut W) -> io::Result<()> {
+        writer.write_all(self.process_data.as_bytes())
+    }
+
+
+}
+
+fn start(input_file: &Path) -> String {
+    let mut final_data = String::new();
+    //println!("{}", input_file.display());
+    if file_exists(&input_file) {
+        println!("File: {} exists!", input_file.display());
+        // TODO: improve error handling here!
+        let get_data = read_input(&input_file).unwrap();
+        let parsed_data = parse(get_data);
+        process_data(parsed_data, &mut final_data);
+    } else {
+        eprintln!("File: {} does not exist!", input_file.display());
+    }
+
+    final_data
 }
 
 // Read input
@@ -102,25 +150,28 @@ fn extract_flags(tokens: Vec<&str>) -> Vec<Flag> {
 
 // # PROCESS THE DATA
 // Now that I have the data parsed I want to assemble it into the makefile
-fn process(parsed: Vec<TextureInfo>) {
-    print_filenames(&parsed);
-    print_commands(&parsed);
+fn process_data(parsed: Vec<TextureInfo>, x: &mut String) {
+    x.push_str(&collect_filenames(&parsed));
+    x.push_str(&collect_commands(&parsed));
 }
 
-fn print_filenames(parsed: &[TextureInfo]) {
-    println!("MIPS = ");
+fn collect_filenames(parsed: &[TextureInfo]) -> String {
+    let mut filenames = format!("MIPS = \n");
     for texture in parsed {
-        let formatted = format!("\t{:<50}\\", texture.filename);
-        println!("{}", formatted);
+        let formatted = format!("\t{:<50}\\\n", texture.filename);
+        filenames += formatted.as_str();
     }
+
+    return filenames;
 }
 
-fn print_commands(parsed: &[TextureInfo]) {
-    println!("\n##### MIP Commands Below for {} Textures #####", parsed.len());
+fn collect_commands(parsed: &[TextureInfo]) -> String {
+    let mut commands = format!("\n##### MIP Commands Below for {} Textures #####\n", parsed.len());
 
     for texture in parsed {
         let udim_name = texture.filename.replace("1001", "UDIM").replace(".tga", ".mip");
-        println!("{} : {}", udim_name, texture.filename);
+        let formatted = format!("{} : {}\n", udim_name, texture.filename);
+        commands += &formatted;
 
         let mut priority = 0.1;
         let mut flag_str = String::new();
@@ -140,6 +191,7 @@ fn print_commands(parsed: &[TextureInfo]) {
                 _ => eprintln!("Warning: Unexpected flag detected")
             }
         }
-        println!("\t$(MAKEMIP) {} -tile -priority {} -cal 1.0 {}", texture.filename, priority, flag_str);
+        commands += &format!("\t$(MAKEMIP) {} -tile -priority {} -cal 1.0 {}\n", texture.filename, priority, flag_str);
     }
+    return commands;
 }
