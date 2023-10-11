@@ -1,0 +1,4 @@
+hairpin_001_ao_1001.tga -ao
+hairpin_001_basecolor_1001.tga
+hairpin_001_nrm_1001.tga -nrm -highprec
+hairpin_001_spec_1001.tga -spec
