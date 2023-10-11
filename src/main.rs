@@ -35,16 +35,20 @@ fn main() -> Result<(), Box<dyn Error>> {
         // This means we can easily switch between writing to stdout and a file
         // without changing the core logic that generates the data.
         let mut writer: Box<dyn Write> = if let Some(output_path) = cli.output_file.as_deref() {
-            println!("User provided an output_filepath so we are writing to it");
+            println!("Writing to: {}", output_path.display());
             Box::new(File::create(output_path)?)
         } else {
-            println!("User didn't provide an output_filepath so writing to stdout");
+            println!("Writing to stdout");
             Box::new(io::stdout())
         };
 
         // The `generate` function is expected to handle the logic of processing the input
         // and producing the desired output, which is then written to our writer.
         UDIM::generate(input_path)?.write_data(&mut writer)?;
+
+        let emoji = 0x1F525;
+        let emoji = char::from_u32(emoji).expect("Not a valid code point");
+        println!("Success {}", emoji);
 
         Ok(()) // <- Explicitly return Ok at the end of this branch
     } else {
