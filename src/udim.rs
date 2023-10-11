@@ -1,62 +1,48 @@
-
 use std::fs::File;
-use std::io::{self, BufRead, BufReader, Error, Write};
+use std::io::{self, BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
+use std::error::Error;
 
-
-// Okay, I think I have an idea of what I want.
-// I think I want to create a UDIM object that will store the
-// input_file and output_file destinations.
-// It will also store the final parsed data
-// And then based on the users needs it will either print to std or to file
 pub struct UDIM {
     input_file: PathBuf,
-    output_file: PathBuf,
     process_data: String,
-
 }
 
 impl UDIM {
-    pub fn new(input_file: &Path, output_file: &Path) -> Self {
+    pub fn generate(input_file: &Path) -> Result<Self, Box<dyn Error>> {
         let input_file_buf = input_file.to_path_buf();
-        let process_data = start(&input_file_buf);
+        let process_data = start(&input_file_buf)?;
 
-        UDIM {
+        Ok(UDIM {
             input_file: input_file_buf,
-            output_file: output_file.to_path_buf(),
             process_data,
-        }
-    }
-
-    pub fn print(&self) {
-        println!("{}", self.process_data);
+        })
     }
 
     pub fn write_data<W: Write>(&self, writer: &mut W) -> io::Result<()> {
         writer.write_all(self.process_data.as_bytes())
     }
-
-
 }
 
-fn start(input_file: &Path) -> String {
-    let mut final_data = String::new();
-    //println!("{}", input_file.display());
+fn start(input_file: &Path) -> Result<String, Box<dyn Error>> {
+
     if file_exists(&input_file) {
         println!("File: {} exists!", input_file.display());
-        // TODO: improve error handling here!
-        let get_data = read_input(&input_file).unwrap();
-        let parsed_data = parse(get_data);
-        process_data(parsed_data, &mut final_data);
-    } else {
-        eprintln!("File: {} does not exist!", input_file.display());
-    }
 
-    final_data
+        let get_data = read_input(&input_file)?;
+        let parsed_data = parse(get_data);
+
+        let mut final_data = String::new();
+        process_data(parsed_data, &mut final_data);
+        Ok(final_data)
+    } else {
+        let error_message = format!("File: {} not found.", input_file.display());
+        Err(Box::new(io::Error::new(io::ErrorKind::NotFound, error_message)))
+    }
 }
 
 // Read input
-fn read_input(input_file: &Path) -> Result<BufReader<File>, Error> {
+fn read_input(input_file: &Path) -> Result<BufReader<File>, io::Error> {
     let input = File::open(input_file)?;
     let buffered = BufReader::new(input);
 
@@ -149,7 +135,6 @@ fn extract_flags(tokens: Vec<&str>) -> Vec<Flag> {
 
 
 // # PROCESS THE DATA
-// Now that I have the data parsed I want to assemble it into the makefile
 fn process_data(parsed: Vec<TextureInfo>, x: &mut String) {
     x.push_str(&collect_filenames(&parsed));
     x.push_str(&collect_commands(&parsed));

@@ -1,9 +1,11 @@
 mod udim;
+
+use std::error::Error;
 use crate::udim::UDIM;
 
 use std::fs::File;
-use std::io::{self, BufRead, Write, Result};
-use std::path::{Path, PathBuf};
+use std::io::{self, Write};
+use std::path::{PathBuf};
 
 use clap::{Parser};
 
@@ -17,7 +19,7 @@ struct Args {
     output_file: Option<PathBuf>,
 }
 
-fn main() -> Result<()> {
+fn main() -> Result<(), Box<dyn Error>> {
     println!("Hello...you are running UDIMGenerator!");
     let cli = Args::parse();
 
@@ -31,7 +33,9 @@ fn main() -> Result<()> {
             Box::new(io::stdout())
         };
 
-        UDIM::new(input_path).write_data(&mut writer)
+        UDIM::generate(input_path)?.write_data(&mut writer)?;
+
+        Ok(()) // <- Explicitly return Ok at the end of this branch
     } else {
         Ok(())
     }
