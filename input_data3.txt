@@ -1,0 +1,75 @@
+hairpin_001_ao_1001.tga -ao
+clip_002_basecolor_1001.tga
+bezel_003_nrm_1001.tga -nrm -highprec
+band_004_spec_1001.tga -spec
+hairclip_005_ao_1001.tga -ao
+buckle_006_basecolor_1001.tga
+bracelet_007_nrm_1001.tga -nrm
+cuff_008_spec_1001.tga -spec
+earring_009_ao_1001.tga -ao
+necklace_010_basecolor_1001.tga
+ring_011_nrm_1001.tga -nrm -highprec
+bangle_012_spec_1001.tga -spec
+brooch_013_ao_1001.tga -ao
+tiara_014_basecolor_1001.tga
+pendant_015_nrm_1001.tga -nrm
+anklet_016_spec_1001.tga -spec
+headband_017_ao_1001.tga -ao
+chain_018_basecolor_1001.tga
+choker_019_nrm_1001.tga -nrm -highprec
+charm_020_spec_1001.tga -spec
+loop_021_ao_1001.tga -ao
+link_022_basecolor_1001.tga
+toggle_023_nrm_1001.tga -nrm
+clasp_024_spec_1001.tga -spec
+connector_025_ao_1001.tga -ao
+snap_026_basecolor_1001.tga
+spacer_027_nrm_1001.tga -nrm -highprec
+seal_028_spec_1001.tga -spec
+locket_029_ao_1001.tga -ao
+wire_030_basecolor_1001.tga
+cord_031_nrm_1001.tga -nrm -highprec
+ribbon_032_spec_1001.tga -spec
+string_033_ao_1001.tga -ao
+thread_034_basecolor_1001.tga
+fiber_035_nrm_1001.tga -nrm
+strand_036_spec_1001.tga -spec
+filament_037_ao_1001.tga -ao
+twine_038_basecolor_1001.tga
+line_039_nrm_1001.tga -nrm -highprec
+yarn_040_spec_1001.tga -spec
+coil_041_ao_1001.tga -ao
+spiral_042_basecolor_1001.tga
+twist_043_nrm_1001.tga -nrm
+curl_044_spec_1001.tga -spec
+whirl_045_ao_1001.tga -ao
+knot_046_basecolor_1001.tga
+warp_047_nrm_1001.tga -nrm
+weft_048_spec_1001.tga -spec
+loop_049_ao_1001.tga -ao
+furl_050_basecolor_1001.tga
+roll_051_nrm_1001.tga -nrm -highprec
+wreath_052_spec_1001.tga -spec
+helix_053_ao_1001.tga -ao
+spire_054_basecolor_1001.tga
+pyramid_055_nrm_1001.tga -nrm
+column_056_spec_1001.tga -spec
+cylinder_057_ao_1001.tga -ao
+sphere_058_basecolor_1001.tga
+cube_059_nrm_1001.tga -nrm -highprec
+diamond_060_spec_1001.tga -spec
+prism_061_ao_1001.tga -ao
+obelisk_062_basecolor_1001.tga
+monument_063_nrm_1001.tga -nrm
+marker_064_spec_1001.tga -spec
+relic_065_ao_1001.tga -ao
+trophy_066_basecolor_1001.tga
+award_067_nrm_1001.tga -nrm
+medal_068_spec_1001.tga -spec
+plaque_069_ao_1001.tga -ao
+banner_070_basecolor_1001.tga
+flag_071_nrm_1001.tga -nrm -highprec
+emblem_072_spec_1001.tga -spec
+crest_073_ao_1001.tga -ao
+seal_074_basecolor_1001.tga
+badge_075_nrm_1001.tga -nrm
