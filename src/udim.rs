@@ -3,12 +3,15 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::error::Error;
 
+// Represents UDIM texture processing, encapsulating the input file and the processed data
 pub struct UDIM {
     input_file: PathBuf,
     process_data: String,
 }
 
 impl UDIM {
+    /// Generates a new UDIM structure by processing a give input file.
+    /// This provides a clean separation between initialization and processing.
     pub fn generate(input_file: &Path) -> Result<Self, Box<dyn Error>> {
         let input_file_buf = input_file.to_path_buf();
         let process_data = start(&input_file_buf)?;
@@ -19,11 +22,13 @@ impl UDIM {
         })
     }
 
+    /// Outputs the processed data to a provided writable stream.
     pub fn write_data<W: Write>(&self, writer: &mut W) -> io::Result<()> {
         writer.write_all(self.process_data.as_bytes())
     }
 }
 
+/// Main processing function to validate, read and parse the input file.
 fn start(input_file: &Path) -> Result<String, Box<dyn Error>> {
 
     if file_exists(&input_file) {
@@ -36,12 +41,13 @@ fn start(input_file: &Path) -> Result<String, Box<dyn Error>> {
         process_data(parsed_data, &mut final_data);
         Ok(final_data)
     } else {
+        /// Provide a more specific error message when the input file doesn't exist.
         let error_message = format!("File: {} not found.", input_file.display());
         Err(Box::new(io::Error::new(io::ErrorKind::NotFound, error_message)))
     }
 }
 
-// Read input
+/// Reads the content of the input file and returns a buffered reader.
 fn read_input(input_file: &Path) -> Result<BufReader<File>, io::Error> {
     let input = File::open(input_file)?;
     let buffered = BufReader::new(input);
@@ -54,7 +60,8 @@ fn file_exists(file_path: &Path) -> bool {
 }
 
 
-// Parsing
+/// Parsing functions to extract texture information from lines of input data.
+/// Definitions to categorize the type of texture and additional attributes.
 // Data Structures
 #[derive(Debug, PartialEq)]
 enum TextureType {
@@ -132,7 +139,6 @@ fn extract_flags(tokens: Vec<&str>) -> Vec<Flag> {
     }
     flags
 }
-
 
 // # PROCESS THE DATA
 fn process_data(parsed: Vec<TextureInfo>, x: &mut String) {
